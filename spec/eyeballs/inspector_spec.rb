@@ -7,6 +7,7 @@ describe Eyeballs::Inspector do
     Foo.all.preload(:bars).eyeballs
   end
 
+  let(:foo_paginate) { Foo.limit(10).offset(0).all.eyeballs}
 
   describe :queries do
     context :foo do
@@ -21,6 +22,13 @@ describe Eyeballs::Inspector do
         expect(foo_bar.queries.length).to eql 2 
         expect(foo_bar.queries[0]).to include 'SELECT "foos".* FROM "foos"'
         expect(foo_bar.queries[1]).to include 'SELECT "bars".* FROM "bars"'
+      end
+    end
+    
+    context :foo_paginate do
+      it "returns array of queries" do
+        expect(foo_paginate.queries.length).to eql 1
+        expect(foo_paginate.queries.length).to include "LIMIT 10 OFFSET 0"
       end
     end
   end
